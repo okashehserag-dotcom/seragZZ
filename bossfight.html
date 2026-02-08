@@ -1,0 +1,65 @@
+<section class="bf-card">
+  <div class="bf-top">
+    <div>
+      <div class="bf-title">Boss Fight 🥊</div>
+      <div class="bf-sub">اهزم الزعيم بالدقائق المركّزة. Combo و Critical تلقائي.</div>
+    </div>
+    <div class="bf-pill" id="bfStatus">جاهز</div>
+  </div>
+
+  <div class="bf-grid" style="margin-top:12px">
+    <div class="bf-arena">
+      <div class="bf-bossWrap">
+        <div id="bfBoss" class="bf-boss">
+          <div class="bf-mouth"></div>
+        </div>
+      </div>
+
+      <div class="bf-hp">
+        <div class="bf-sub">
+          <span id="bfBossName">لا يوجد زعيم</span>
+          •
+          <span>HP:</span>
+          <strong id="bfHpLeft">0</strong>/<span id="bfHpTotal">0</span> دقيقة
+        </div>
+        <div class="bf-bar"><div class="bf-fill" id="bfHpFill"></div></div>
+      </div>
+
+      <div class="bf-timer" id="bfTimer">00:00</div>
+      <div class="bf-note" id="bfHint">ابدأ تركيز… (يوقف تلقائيًا إذا خرجت من التبويب)</div>
+
+      <div class="bf-actions">
+        <button id="bfStart">ابدأ تركيز</button>
+        <button id="bfPause">إيقاف</button>
+        <button id="bfFinish">إنهاء الجلسة</button>
+      </div>
+    </div>
+
+    <div class="bf-mini">
+      <div class="bf-note">إنشاء/تغيير الزعيم</div>
+
+      <input id="bfNewName" placeholder="مثال: رياضيات — تكامل" maxlength="60" />
+      <input id="bfNewHP" type="number" min="10" max="2000" value="120" />
+      <select id="bfNewMode">
+        <option value="daily">يومي</option>
+        <option value="weekly">أسبوعي</option>
+        <option value="mini">سريع</option>
+      </select>
+
+      <div class="bf-actions">
+        <button id="bfCreate">إنشاء/استبدال</button>
+        <button id="bfReset">مسح بيانات اللعبة</button>
+      </div>
+
+      <div class="bf-note" style="margin-top:6px">
+        Combo: جلسة ≥ 25د → +5 ضرر إضافي<br/>
+        Critical: أول جلسة مكتملة باليوم → +10 مرة واحدة
+      </div>
+
+      <details>
+        <summary class="bf-note">سجل الضربات</summary>
+        <div id="bfLog" style="margin-top:10px; display:grid; gap:8px; opacity:.85"></div>
+      </details>
+    </div>
+  </div>
+</section>
