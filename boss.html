@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boss Fight - دراسة</title>
+  <link rel="stylesheet" href="./boss.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>Boss Fight 🥊</h1>
+    <p class="sub">حوّل وقت الدراسة لزعيم (HP بالدقائق) واهزمه بالتركيز.</p>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>إنشاء زعيم</h2>
+
+      <div class="grid">
+        <label>
+          اسم الزعيم
+          <input id="bossName" type="text" placeholder="مثال: رياضيات — تكامل" maxlength="60" />
+        </label>
+
+        <label>
+          HP (بالدقائق)
+          <input id="bossHP" type="number" min="10" max="2000" value="120" />
+        </label>
+
+        <label>
+          نوعه
+          <select id="bossMode">
+            <option value="daily">يومي</option>
+            <option value="weekly">أسبوعي</option>
+            <option value="mini">سريع</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="row">
+        <button id="createBoss" class="primary">إنشاء / استبدال الزعيم</button>
+        <button id="resetAll" class="danger" title="يمسح كل بيانات Boss Fight">مسح البيانات</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>الزعيم الحالي</h2>
+
+      <div id="noBoss" class="muted">
+        لا يوجد زعيم الآن. أنشئ واحد من الأعلى.
+      </div>
+
+      <div id="bossArea" class="bossArea hidden">
+        <div class="bossHeader">
+          <div>
+            <div class="bossTitle" id="bossTitle">—</div>
+            <div class="bossMeta" id="bossMeta">—</div>
+          </div>
+          <div class="pill" id="bossStatus">جاهز</div>
+        </div>
+
+        <div class="hpBlock">
+          <div class="hpText">
+            <span>HP المتبقي:</span>
+            <strong id="hpLeftText">0</strong>
+            <span>/</span>
+            <span id="hpTotalText">0</span>
+            <span>دقيقة</span>
+          </div>
+          <div class="bar">
+            <div class="barFill" id="hpBar"></div>
+          </div>
+        </div>
+
+        <div class="timerBlock">
+          <div class="timer" id="timerText">00:00</div>
+          <div class="timerHint muted" id="timerHint">اضغط ابدأ للتركيز. (يوقف تلقائيًا إذا خرجت من التبويب)</div>
+        </div>
+
+        <div class="row">
+          <button id="startFocus" class="primary">ابدأ تركيز</button>
+          <button id="pauseFocus">إيقاف مؤقت</button>
+          <button id="finishFocus" class="success" title="ينهي جلسة ويرصد الضربة (لو في وقت)">إنهاء الجلسة</button>
+        </div>
+
+        <hr />
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">دقائق اليوم</div>
+            <div class="v" id="todayMinutes">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">جلسات مكتملة</div>
+            <div class="v" id="sessionsDone">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Combo (جلسة ≥ 25د)</div>
+            <div class="v" id="comboCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Critical (مرة باليوم)</div>
+            <div class="v" id="criticalUsed">لا</div>
+          </div>
+        </div>
+
+        <details class="logWrap">
+          <summary>سجل الضربات</summary>
+          <div id="log" class="log"></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>اختصارات سريعة (اختياري)</h2>
+      <ul class="muted">
+        <li>جلسة 25 دقيقة = Combo Bonus (-5 HP إضافية)</li>
+        <li>أول جلسة مكتملة باليوم = Critical Bonus (-10 HP إضافية) مرة واحدة</li>
+        <li>إذا خرجت من التبويب، الجلسة توقف تلقائياً (منع “غش”)</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot muted">
+    <a href="./">العودة للتطبيق الرئيسي</a>
+  </footer>
+
+  <script src="./boss.js"></script>
+</body>
+</html>
