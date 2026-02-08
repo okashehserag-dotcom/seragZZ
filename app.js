@@ -2764,3 +2764,350 @@
     });
   });
 })();
+/* === Boss Fight (Self-Contained) — paste at END of app.js === */
+(function () {
+  const KEY = "seragZZ_bossFight_embedded_v1";
+  const $ = (q) => document.querySelector(q);
+
+  // 1) Inject CSS
+  const css = `
+#bfFab{position:fixed;left:16px;bottom:16px;z-index:99999;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.25);color:inherit;cursor:pointer;backdrop-filter:blur(6px)}
+#bfOverlay{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:14px}
+#bfModal{width:min(980px,100%);max-height:90vh;overflow:auto;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);backdrop-filter:blur(10px);padding:12px;direction:rtl}
+#bfTop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+#bfClose{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:inherit;cursor:pointer}
+.bfCard{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;background:rgba(0,0,0,.15)}
+.bfGrid{display:grid;gap:12px}
+@media(min-width:820px){.bfGrid{grid-template-columns:1.2fr .8fr}}
+.bfTop2{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.bfTitle{font-size:18px;font-weight:800}
+.bfSub{opacity:.75;font-size:13px}
+.bfPill{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.14);opacity:.9;font-size:12px}
+.bfArena{position:relative;border-radius:18px;padding:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);
+background:radial-gradient(1200px 600px at 20% 10%, rgba(59,130,246,.20), transparent 55%),
+radial-gradient(900px 500px at 80% 30%, rgba(34,197,94,.16), transparent 60%),
+radial-gradient(700px 400px at 50% 90%, rgba(239,68,68,.12), transparent 60%), rgba(0,0,0,.18)}
+.bfBossWrap{display:grid;place-items:center;padding:10px 0 6px}
+#bfBoss{width:160px;height:160px;border-radius:22px;position:relative;border:1px solid rgba(255,255,255,.10);
+background:radial-gradient(60px 60px at 40% 35%, rgba(255,255,255,.18), transparent 60%),
+radial-gradient(90px 90px at 70% 70%, rgba(0,0,0,.22), transparent 55%),
+linear-gradient(135deg, rgba(59,130,246,.35), rgba(34,197,94,.22));
+box-shadow:0 12px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06);
+animation:bfFloat 2.4s ease-in-out infinite}
+#bfBoss::before,#bfBoss::after{content:"";position:absolute;top:56px;width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
+#bfBoss::before{right:52px} #bfBoss::after{left:52px}
+#bfMouth{position:absolute;left:50%;top:92px;transform:translateX(-50%);width:56px;height:18px;border-radius:0 0 999px 999px;background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 2px rgba(255,255,255,.06)}
+@keyframes bfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.bfHit{animation:bfShake .18s linear 2}
+@keyframes bfShake{0%{transform:translate(0,0)}25%{transform:translate(3px,-1px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,1px)}100%{transform:translate(0,0)}}
+.bfSpark{position:absolute;width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.9);pointer-events:none;animation:bfPop .55s ease-out forwards}
+@keyframes bfPop{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.bfHp{margin-top:8px;display:grid;gap:8px}
+.bfBar{height:14px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);overflow:hidden}
+#bfFill{height:100%;width:0%;background:linear-gradient(90deg, rgba(34,197,94,.85), rgba(59,130,246,.85));transition:width .2s ease}
+.bfActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.bfActions button{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:inherit;cursor:pointer}
+.bfMini{display:grid;gap:10px}
+.bfMini input,.bfMini select{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);color:inherit;outline:none;width:100%}
+#bfTimer{font-size:42px;font-weight:900;letter-spacing:1px;text-align:center;margin-top:6px}
+.bfNote{opacity:.75;font-size:13px}
+#bfLog{margin-top:10px;display:grid;gap:8px;opacity:.9}
+`;
+  const style = document.createElement("style");
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  // 2) Inject HTML (FAB + Modal)
+  if (!$("#bfFab")) {
+    const fab = document.createElement("button");
+    fab.id = "bfFab";
+    fab.type = "button";
+    fab.textContent = "🥊 Boss";
+    document.body.appendChild(fab);
+
+    const overlay = document.createElement("div");
+    overlay.id = "bfOverlay";
+    overlay.innerHTML = `
+      <div id="bfModal">
+        <div id="bfTop">
+          <strong>Boss Fight</strong>
+          <button id="bfClose" type="button">إغلاق ✕</button>
+        </div>
+
+        <div class="bfCard">
+          <div class="bfTop2">
+            <div>
+              <div class="bfTitle">Boss Fight 🥊</div>
+              <div class="bfSub">اهزم الزعيم بالدقائق المركّزة (Combo + Critical).</div>
+            </div>
+            <div class="bfPill" id="bfStatus">جاهز</div>
+          </div>
+
+          <div class="bfGrid" style="margin-top:12px">
+            <div class="bfArena" id="bfArena">
+              <div class="bfBossWrap">
+                <div id="bfBoss"><div id="bfMouth"></div></div>
+              </div>
+
+              <div class="bfHp">
+                <div class="bfSub">
+                  <span id="bfName">لا يوجد زعيم</span> •
+                  HP: <strong id="bfHpLeft">0</strong>/<span id="bfHpTotal">0</span> دقيقة
+                </div>
+                <div class="bfBar"><div id="bfFill"></div></div>
+              </div>
+
+              <div id="bfTimer">00:00</div>
+              <div class="bfNote" id="bfHint">يوقف تلقائيًا إذا خرجت من التبويب.</div>
+
+              <div class="bfActions">
+                <button id="bfStart" type="button">ابدأ تركيز</button>
+                <button id="bfPause" type="button">إيقاف</button>
+                <button id="bfFinish" type="button">إنهاء الجلسة</button>
+              </div>
+            </div>
+
+            <div class="bfMini">
+              <div class="bfNote">إنشاء/تغيير الزعيم</div>
+              <input id="bfNewName" placeholder="مثال: رياضيات — تكامل" maxlength="60">
+              <input id="bfNewHP" type="number" min="10" max="2000" value="120">
+              <select id="bfNewMode">
+                <option value="daily">يومي</option>
+                <option value="weekly">أسبوعي</option>
+                <option value="mini">سريع</option>
+              </select>
+
+              <div class="bfActions">
+                <button id="bfCreate" type="button">إنشاء/استبدال</button>
+                <button id="bfReset" type="button">مسح بيانات اللعبة</button>
+              </div>
+
+              <div class="bfNote">
+                Combo: جلسة ≥ 25د → +5 ضرر<br>
+                Critical: أول جلسة مكتملة باليوم → +10 مرة واحدة
+              </div>
+
+              <details>
+                <summary class="bfNote">سجل الضربات</summary>
+                <div id="bfLog"></div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // open/close
+    fab.addEventListener("click", () => (overlay.style.display = "flex"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.style.display = "none"; });
+    $("#bfClose").addEventListener("click", () => (overlay.style.display = "none"));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") overlay.style.display = "none"; });
+  }
+
+  // 3) Logic
+  const modeLabel = (m) => (m === "weekly" ? "أسبوعي" : m === "mini" ? "سريع" : "يومي");
+  const todayKey = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  };
+  const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+  const fmt = (sec)=>{
+    sec = Math.max(0, Math.floor(sec));
+    const m = String(Math.floor(sec/60)).padStart(2,"0");
+    const s = String(sec%60).padStart(2,"0");
+    return `${m}:${s}`;
+  };
+
+  const defaults = () => ({
+    day: todayKey(),
+    criticalUsed: false,
+    boss: null, // {name, mode, hpTotal, hpLeft}
+    log: [],
+    session: { running:false, elapsed:0, last:null }
+  });
+
+  let state;
+  try { state = JSON.parse(localStorage.getItem(KEY) || "null") || defaults(); }
+  catch { state = defaults(); }
+
+  function rollover() {
+    if (state.day !== todayKey()) {
+      state.day = todayKey();
+      state.criticalUsed = false;
+      state.session.running = false;
+      state.session.elapsed = 0;
+      state.session.last = null;
+    }
+  }
+  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+  function pushLog(t){
+    state.log.unshift({ at: new Date().toISOString(), t });
+    state.log = state.log.slice(0, 30);
+  }
+
+  function renderStatus(){
+    const st = $("#bfStatus");
+    if (!state.boss) return (st.textContent = "جاهز");
+    if (state.boss.hpLeft <= 0) st.textContent = "تمت الهزيمة ✅";
+    else if (state.session.running) st.textContent = "تركيز جاري…";
+    else st.textContent = "جاهز";
+  }
+
+  function sparks(x,y){
+    const arena = $("#bfArena");
+    for (let i=0;i<10;i++){
+      const s = document.createElement("div");
+      s.className = "bfSpark";
+      s.style.left = `${x}px`;
+      s.style.top = `${y}px`;
+      s.style.setProperty("--dx", `${(Math.random()*120-60)|0}px`);
+      s.style.setProperty("--dy", `${(Math.random()*120-60)|0}px`);
+      arena.appendChild(s);
+      setTimeout(()=>s.remove(), 650);
+    }
+  }
+
+  function hitFX(){
+    const boss = $("#bfBoss");
+    boss.classList.remove("bfHit");
+    void boss.offsetWidth;
+    boss.classList.add("bfHit");
+    const r = boss.getBoundingClientRect();
+    const a = $("#bfArena").getBoundingClientRect();
+    sparks(r.left - a.left + r.width/2, r.top - a.top + r.height/2);
+  }
+
+  function render(){
+    rollover();
+
+    $("#bfName").textContent = state.boss ? `${state.boss.name} (${modeLabel(state.boss.mode)})` : "لا يوجد زعيم";
+    $("#bfHpLeft").textContent = state.boss ? state.boss.hpLeft : 0;
+    $("#bfHpTotal").textContent = state.boss ? state.boss.hpTotal : 0;
+
+    const pct = state.boss && state.boss.hpTotal ? (state.boss.hpLeft / state.boss.hpTotal) * 100 : 0;
+    $("#bfFill").style.width = `${clamp(pct,0,100)}%`;
+
+    $("#bfTimer").textContent = fmt(state.session.elapsed);
+
+    $("#bfStart").disabled = !state.boss || state.session.running || state.boss.hpLeft <= 0;
+    $("#bfPause").disabled = !state.session.running;
+    $("#bfFinish").disabled = !state.session.running;
+
+    const log = $("#bfLog");
+    log.innerHTML = "";
+    if (!state.log.length) log.innerHTML = `<div class="bfPill">لا يوجد سجل بعد</div>`;
+    else state.log.slice(0, 12).forEach(it=>{
+      const div = document.createElement("div");
+      div.className = "bfPill";
+      div.textContent = `${new Date(it.at).toLocaleString()} — ${it.t}`;
+      log.appendChild(div);
+    });
+
+    renderStatus();
+    save();
+  }
+
+  let timer = null;
+  function startTimer(){
+    if (timer) clearInterval(timer);
+    timer = setInterval(()=>{
+      if (!state.session.running) return;
+      if (document.hidden) return pause("توقف تلقائيًا لأنك خرجت من التبويب.");
+      const now = Date.now();
+      const last = state.session.last ?? now;
+      state.session.last = now;
+      state.session.elapsed += (now - last) / 1000;
+      save(); render();
+    }, 250);
+  }
+
+  function createBoss(){
+    const name = ($("#bfNewName").value || "").trim();
+    const hp = Number($("#bfNewHP").value);
+    const mode = $("#bfNewMode").value;
+    if (!name) return alert("اكتب اسم الزعيم.");
+    if (!Number.isFinite(hp) || hp < 10) return alert("HP لازم يكون رقم ≥ 10.");
+
+    state.boss = { name, mode, hpTotal: hp|0, hpLeft: hp|0 };
+    state.session.running = false;
+    state.session.elapsed = 0;
+    state.session.last = null;
+    pushLog(`تم إنشاء زعيم "${name}" بـ HP=${hp|0} (${modeLabel(mode)}).`);
+    save(); render();
+  }
+
+  function start(){
+    if (!state.boss || state.boss.hpLeft<=0) return;
+    state.session.running = true;
+    state.session.last = Date.now();
+    pushLog("بدأت جلسة تركيز.");
+    save(); startTimer(); render();
+  }
+
+  function pause(msg="إيقاف."){
+    if (!state.session.running) return;
+    state.session.running = false;
+    state.session.last = null;
+    pushLog(msg);
+    save(); render();
+  }
+
+  function finish(){
+    if (!state.session.running || !state.boss) return;
+    state.session.running = false;
+    state.session.last = null;
+
+    const minutes = Math.floor(state.session.elapsed / 60);
+    if (minutes <= 0){
+      pushLog("انتهت الجلسة (أقل من دقيقة — لم تُحسب).");
+      state.session.elapsed = 0;
+      save(); render();
+      return;
+    }
+
+    let dmg = minutes, combo=0, crit=0;
+    if (minutes >= 25){ combo = 5; dmg += combo; }
+    if (!state.criticalUsed){ crit = 10; dmg += crit; state.criticalUsed = true; }
+
+    const before = state.boss.hpLeft;
+    state.boss.hpLeft = clamp(state.boss.hpLeft - dmg, 0, state.boss.hpTotal);
+
+    pushLog(`جلسة ${minutes}د → ضرر ${dmg} (Combo +${combo}, Crit +${crit}) | HP: ${before} → ${state.boss.hpLeft}`);
+    hitFX();
+
+    if (state.boss.hpLeft <= 0){
+      pushLog(`🎉 هزمت الزعيم "${state.boss.name}"!`);
+      setTimeout(()=>alert(`🎉 مبروك! هزمت الزعيم: ${state.boss.name}`), 150);
+    }
+
+    state.session.elapsed = 0;
+    save(); render();
+  }
+
+  function reset(){
+    if (!confirm("متأكد؟ سيتم مسح بيانات Boss Fight.")) return;
+    localStorage.removeItem(KEY);
+    state = defaults();
+    if (timer) clearInterval(timer);
+    timer = null;
+    render();
+  }
+
+  // Bind once
+  if (!window.__BF_BOUND__) {
+    window.__BF_BOUND__ = true;
+    document.addEventListener("visibilitychange", ()=>{ if (document.hidden && state.session.running) pause("توقف تلقائيًا لأنك خرجت من التبويب."); });
+    document.addEventListener("click", (e)=>{
+      const id = e.target && e.target.id;
+      if (id === "bfCreate") return createBoss();
+      if (id === "bfStart") return start();
+      if (id === "bfPause") return pause("إيقاف.");
+      if (id === "bfFinish") return finish();
+      if (id === "bfReset") return reset();
+    });
+  }
+
+  render();
+})();
