@@ -2764,107 +2764,131 @@
     });
   });
 })();
-// ===== BOSS FIGHT — FINAL CLEAN VERSION =====
+// ===== BOSS FIGHT — FINAL SAFE VERSION (DOM Ready) =====
 (function () {
-  const KEY = "BF_FINAL_V1";
+  function initBF() {
+    // لو اتنفذ مرة لا تعيده
+    if (window.__BF_FINAL__) return;
+    window.__BF_FINAL__ = true;
 
-  /* زر */
-  const btn = document.createElement("button");
-  btn.textContent = "👿 Boss Fight";
-  btn.style = `
-    position:fixed;bottom:16px;left:16px;z-index:99999;
-    padding:12px 16px;border-radius:999px;
-    background:#7c0a02;color:#fff;
-    border:none;font-weight:700;cursor:pointer;
-  `;
-  document.body.appendChild(btn);
+    let hp = 100;
 
-  /* نافذة */
-  const overlay = document.createElement("div");
-  overlay.style = `
-    position:fixed;inset:0;display:none;
-    background:rgba(0,0,0,.7);z-index:100000;
-    align-items:center;justify-content:center;
-  `;
-  document.body.appendChild(overlay);
+    // زر
+    const btn = document.createElement("button");
+    btn.textContent = "👿 Boss Fight";
+    btn.style.cssText = `
+      position:fixed;bottom:16px;left:16px;z-index:99999;
+      padding:12px 16px;border-radius:999px;
+      background:#7c0a02;color:#fff;border:none;
+      font-weight:700;cursor:pointer;
+      box-shadow:0 10px 24px rgba(0,0,0,.35);
+    `;
 
-  overlay.innerHTML = `
-  <div style="
-    background:#120909;color:#fff;
-    width:90%;max-width:500px;
-    border-radius:16px;padding:20px;
-    box-shadow:0 0 40px red;
-    text-align:center
-  ">
-    <h2>👿 Evil Boss</h2>
+    // نافذة
+    const overlay = document.createElement("div");
+    overlay.style.cssText = `
+      position:fixed;inset:0;display:none;
+      background:rgba(0,0,0,.7);z-index:100000;
+      align-items:center;justify-content:center;padding:14px;
+    `;
 
-    <div id="boss"
-      style="
-        margin:20px auto;
-        width:160px;height:160px;
-        border-radius:50%;
-        background:radial-gradient(circle at 30% 30%, #ff4d4d, #300);
-        box-shadow:0 0 40px red;
-        animation:float 2s ease-in-out infinite;
+    overlay.innerHTML = `
+      <div style="
+        background:#120909;color:#fff;
+        width:90%;max-width:520px;
+        border-radius:16px;padding:20px;
+        box-shadow:0 0 40px rgba(255,0,0,.35);
+        text-align:center;border:1px solid rgba(255,255,255,.10)
       ">
-    </div>
+        <h2 style="margin:0 0 6px">👿 Evil Boss</h2>
+        <div style="opacity:.8;font-size:13px">اضربه بالجولات…</div>
 
-    <div id="hpText">HP: <b id="hp">100</b></div>
+        <div id="boss"
+          style="
+            margin:18px auto 10px;
+            width:170px;height:170px;border-radius:28px;
+            background:
+              radial-gradient(circle at 35% 35%, rgba(255,80,80,.9), rgba(60,0,0,.6) 45%, rgba(10,10,14,.95) 75%),
+              linear-gradient(135deg, rgba(120,10,2,.9), rgba(10,10,14,.95));
+            box-shadow:0 0 35px rgba(255,0,0,.35), 0 16px 40px rgba(0,0,0,.55);
+            position:relative;
+            animation:bfFloat 2s ease-in-out infinite;
+          ">
+          <div style="position:absolute;top:-18px;left:24px;width:44px;height:44px;border-radius:10px 10px 10px 28px;
+            background:linear-gradient(135deg, rgba(255,255,255,.20), rgba(0,0,0,.35));
+            transform:rotate(-25deg);border:1px solid rgba(255,255,255,.10)"></div>
+          <div style="position:absolute;top:-18px;right:24px;width:44px;height:44px;border-radius:10px 10px 28px 10px;
+            background:linear-gradient(135deg, rgba(255,255,255,.20), rgba(0,0,0,.35));
+            transform:rotate(25deg);border:1px solid rgba(255,255,255,.10)"></div>
 
-    <button id="hit"
-      style="margin-top:16px;padding:10px 14px;
-      border:none;border-radius:10px;
-      background:#ff3333;color:#fff;font-weight:700">
-      اضربه 🔥
-    </button>
+          <div style="position:absolute;top:60px;left:52px;width:18px;height:18px;border-radius:999px;
+            background:radial-gradient(circle at 35% 35%, #fff, rgba(255,0,0,.7) 40%, transparent 72%);
+            box-shadow:0 0 18px rgba(255,60,60,.6)"></div>
+          <div style="position:absolute;top:60px;right:52px;width:18px;height:18px;border-radius:999px;
+            background:radial-gradient(circle at 35% 35%, #fff, rgba(255,0,0,.7) 40%, transparent 72%);
+            box-shadow:0 0 18px rgba(255,60,60,.6)"></div>
 
-    <br><br>
-    <button id="close"
-      style="background:none;border:none;color:#aaa">
-      إغلاق
-    </button>
-  </div>
-  `;
+          <div id="mouth" style="position:absolute;left:50%;top:98px;transform:translateX(-50%);
+            width:78px;height:28px;border-radius:0 0 999px 999px;background:rgba(0,0,0,.55);
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,.06)"></div>
+        </div>
 
-  /* أنيميشن */
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes float {
-      0%,100%{transform:translateY(0)}
-      50%{transform:translateY(-10px)}
-    }
-    .shake {
-      animation: shake .2s linear 2;
-    }
-    @keyframes shake {
-      0%{transform:translate(0)}
-      25%{transform:translate(4px)}
-      50%{transform:translate(-4px)}
-      75%{transform:translate(4px)}
-      100%{transform:translate(0)}
-    }
-  `;
-  document.head.appendChild(style);
+        <div style="margin-top:6px;font-size:15px">HP: <b id="hp">100</b></div>
 
-  let hp = 100;
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+          <button id="hit" style="padding:10px 14px;border:none;border-radius:10px;background:#ff3333;color:#fff;font-weight:800;cursor:pointer">
+            اضربه 🔥
+          </button>
+          <button id="close" style="padding:10px 14px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(0,0,0,.18);color:#ddd;cursor:pointer">
+            إغلاق ✕
+          </button>
+        </div>
+      </div>
+    `;
 
-  btn.onclick = () => overlay.style.display = "flex";
-  overlay.querySelector("#close").onclick = () => overlay.style.display = "none";
+    // CSS للأنيميشن
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes bfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+      .bfShake{animation:bfShake .18s linear 2}
+      @keyframes bfShake{0%{transform:translate(0)}25%{transform:translate(4px,-1px)}50%{transform:translate(-4px,2px)}75%{transform:translate(3px,1px)}100%{transform:translate(0)}}
+    `;
+    document.head.appendChild(style);
 
-  overlay.querySelector("#hit").onclick = () => {
-    hp -= 10;
-    if (hp < 0) hp = 0;
-    overlay.querySelector("#hp").textContent = hp;
+    // ربط
+    btn.addEventListener("click", () => (overlay.style.display = "flex"));
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.style.display = "none"; });
 
-    const boss = overlay.querySelector("#boss");
-    boss.classList.remove("shake");
-    void boss.offsetWidth;
-    boss.classList.add("shake");
+    // لازم بعد إضافة overlay للـ DOM
+    document.body.appendChild(btn);
+    document.body.appendChild(overlay);
 
-    if (hp === 0) {
-      alert("🔥 هزمته!");
-      hp = 100;
-      overlay.querySelector("#hp").textContent = hp;
-    }
-  };
+    const closeBtn = overlay.querySelector("#close");
+    const hitBtn = overlay.querySelector("#hit");
+    const hpEl = overlay.querySelector("#hp");
+    const bossEl = overlay.querySelector("#boss");
+
+    closeBtn.addEventListener("click", () => (overlay.style.display = "none"));
+
+    hitBtn.addEventListener("click", () => {
+      hp = Math.max(0, hp - 10);
+      hpEl.textContent = String(hp);
+
+      bossEl.classList.remove("bfShake");
+      void bossEl.offsetWidth;
+      bossEl.classList.add("bfShake");
+
+      if (hp === 0) {
+        alert("🔥 هزمته!");
+        hp = 100;
+        hpEl.textContent = "100";
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBF);
+  } else {
+    initBF();
+  }
 })();
