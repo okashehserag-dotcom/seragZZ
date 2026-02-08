@@ -2846,8 +2846,14 @@ animation:bfFloat 2.4s ease-in-out infinite}
           <div class="bfGrid" style="margin-top:12px">
             <div class="bfArena" id="bfArena">
               <div class="bfBossWrap">
-                <div id="bfBoss"><div id="bfMouth"></div></div>
-              </div>
+                <div id="bfBoss">
+  <div class="horn left"></div>
+  <div class="horn right"></div>
+  <div class="brow left"></div>
+  <div class="brow right"></div>
+  <div id="bfMouth"></div>
+</div>
+ </div>
 
               <div class="bfHp">
                 <div class="bfSub">
