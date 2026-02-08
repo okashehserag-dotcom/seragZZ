@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f17" />
+  <meta name="color-scheme" content="dark" />
+
+  <title>سراج | Serag</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Icons (Lucide) -->
+  <script src="https://unpkg.com/lucide@0.476.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="app" data-accent="iris">
+  <!-- Backdrop for mobile drawer -->
+  <div id="backdrop" class="backdrop" hidden></div>
+
+  <!-- Mobile Drawer -->
+  <aside id="drawer" class="drawer" aria-hidden="true">
+    <div class="drawer__top">
+      <div class="brand brand--drawer">
+        <div class="brand__mark" aria-hidden="true">س</div>
+        <div class="brand__text">
+          <div class="brand__name" data-i18n="appName">سراج</div>
+          <div class="brand__sub" data-i18n="appTagline">رفيق التوجيهي — خطة ختمة + جلسات + دفتر أخطاء</div>
+        </div>
+      </div>
+
+      <button id="drawerClose" class="iconBtn iconBtn--close" type="button" aria-label="Close menu" title="Close">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <nav class="nav nav--drawer" aria-label="Primary">
+      <button class="nav__item" data-tab="home" type="button">
+        <i data-lucide="sparkles"></i><span data-i18n="tabHome">الرئيسية</span>
+      </button>
+      <button class="nav__item" data-tab="sessions" type="button">
+        <i data-lucide="timer"></i><span data-i18n="tabSessions">جلسات</span>
+      </button>
+      <button class="nav__item" data-tab="plan" type="button">
+        <i data-lucide="calendar-check"></i><span data-i18n="tabPlan">خطة الختمة</span>
+      </button>
+      <button class="nav__item" data-tab="stats" type="button">
+        <i data-lucide="bar-chart-3"></i><span data-i18n="tabStats">الإحصائيات</span>
+      </button>
+      <button class="nav__item" data-tab="mistakes" type="button">
+        <i data-lucide="notebook-pen"></i><span data-i18n="tabMistakes">دفتر الأخطاء</span>
+      </button>
+      <button class="nav__item" data-tab="settings" type="button">
+        <i data-lucide="settings"></i><span data-i18n="tabSettings">الإعدادات</span>
+      </button>
+    </nav>
+
+    <div class="drawer__footer">
+      <div class="miniRow">
+        <div class="chip">
+          <i data-lucide="wifi-off"></i>
+          <span data-i18n="offlineReady">جاهز للعمل دون إنترنت (PWA)</span>
+        </div>
+      </div>
+      <div class="miniRow">
+        <span class="muted" data-i18n="editNote">يمكن تعديل البنود بسهولة من ملف app.js</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Desktop Sidebar -->
+  <aside class="sidebar" aria-label="Sidebar">
+    <div class="sidebar__top">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">س</div>
+        <div class="brand__text">
+          <div class="brand__name" data-i18n="appName">سراج</div>
+          <div class="brand__sub" data-i18n="appTagline">رفيق التوجيهي — خطة ختمة + جلسات + دفتر أخطاء</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Primary">
+      <button class="nav__item" data-tab="home" type="button">
+        <i data-lucide="sparkles"></i><span data-i18n="tabHome">الرئيسية</span>
+      </button>
+      <button class="nav__item" data-tab="sessions" type="button">
+        <i data-lucide="timer"></i><span data-i18n="tabSessions">جلسات</span>
+      </button>
+      <button class="nav__item" data-tab="plan" type="button">
+        <i data-lucide="calendar-check"></i><span data-i18n="tabPlan">خطة الختمة</span>
+      </button>
+      <button class="nav__item" data-tab="stats" type="button">
+        <i data-lucide="bar-chart-3"></i><span data-i18n="tabStats">الإحصائيات</span>
+      </button>
+      <button class="nav__item" data-tab="mistakes" type="button">
+        <i data-lucide="notebook-pen"></i><span data-i18n="tabMistakes">دفتر الأخطاء</span>
+      </button>
+      <button class="nav__item" data-tab="settings" type="button">
+        <i data-lucide="settings"></i><span data-i18n="tabSettings">الإعدادات</span>
+      </button>
+    </nav>
+
+    <div class="sidebar__bottom">
+      <div class="chip">
+        <i data-lucide="shield"></i>
+        <span data-i18n="noExamsNote">بدون بنك أسئلة أو امتحانات — فقط تنظيم ومراجعة</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Header -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <button id="menuBtn" class="iconBtn iconBtn--menu" type="button" aria-label="Open menu" title="Menu">
+          <i data-lucide="menu"></i>
+        </button>
+
+        <div class="crumb">
+          <span class="crumb__title" id="pageTitle" data-i18n="tabHome">الرئيسية</span>
+          <span class="crumb__dot">•</span>
+          <span class="crumb__hint" data-i18n="headerHint">توجيهي 2009 — ركّز على ستريكك اليوم</span>
+        </div>
+      </div>
+
+      <div class="topbar__right">
+        <div class="seg" role="group" aria-label="Language">
+          <button class="seg__btn" id="langAR" type="button">AR</button>
+          <button class="seg__btn" id="langEN" type="button">EN</button>
+        </div>
+
+        <button id="muteBtn" class="iconBtn" type="button" aria-pressed="false" title="Mute">
+          <i data-lucide="volume-2"></i>
+        </button>
+
+        <button id="focusBtn" class="iconBtn" type="button" aria-pressed="false" title="Focus Mode">
+          <i data-lucide="focus"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content" id="content" tabindex="-1">
+      <!-- HOME -->
+      <section class="tab is-active" id="tab-home" data-tab-panel="home" aria-label="Home">
+        <div class="hero">
+          <div class="hero__bg" aria-hidden="true"></div>
+
+          <div class="hero__content">
+            <div class="hero__badge">
+              <i data-lucide="sparkle"></i>
+              <span data-i18n="heroBadge">نمط وزاري + مراجعة + تحليل أخطاء</span>
+            </div>
+
+            <h1 class="hero__title">
+              <span data-i18n="heroTitle1">سراج</span>
+              <span class="hero__titleSub" data-i18n="heroTitle2">رتّب ختمتك… واثبت على الستريك.</span>
+            </h1>
+
+            <p class="hero__desc" data-i18n="heroDesc">
+              تطبيق بسيط للتوجيهي 2009: جلسات تركيز، خطة ختمة يومية، دفتر أخطاء، وإحصائيات تساعدك تمشي بثبات.
+            </p>
+
+            <div class="hero__actions">
+              <button class="btn btn--primary" data-goto="sessions" type="button">
+                <i data-lucide="timer"></i><span data-i18n="ctaStartSession">ابدأ جلسة</span>
+              </button>
+              <button class="btn btn--ghost" data-goto="plan" type="button">
+                <i data-lucide="calendar-check"></i><span data-i18n="ctaOpenPlan">افتح خطة الختمة</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="hero__side">
+            <div class="glassCard glassCard--tight">
+              <div class="cardHead">
+                <div class="cardHead__title" data-i18n="todaysFocus">تركيز اليوم</div>
+                <div class="cardHead__hint" data-i18n="fromPlan">من خطة الختمة</div>
+              </div>
+
+              <div id="todayFocus" class="focusBox">
+                <div class="skeleton sk-1"></div>
+                <div class="skeleton sk-2"></div>
+              </div>
+
+              <div class="miniGrid">
+                <div class="miniStat">
+                  <div class="miniStat__label" data-i18n="miniSessions">جلسات مكتملة</div>
+                  <div class="miniStat__value" id="miniSessions">0</div>
+                </div>
+                <div class="miniStat">
+                  <div class="miniStat__label" data-i18n="miniMinutes">دقائق دراسة</div>
+                  <div class="miniStat__value" id="miniMinutes">0</div>
+                </div>
+                <div class="miniStat">
+                  <div class="miniStat__label" data-i18n="miniPlan">إنجاز الخطة</div>
+                  <div class="miniStat__value" id="miniPlan">0%</div>
+                </div>
+                <div class="miniStat">
+                  <div class="miniStat__label" data-i18n="miniStreak">ستريك</div>
+                  <div class="miniStat__value" id="miniStreak">0</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="quickGrid">
+              <button class="quickCard" data-goto="sessions" type="button">
+                <div class="quickCard__icon"><i data-lucide="flame"></i></div>
+                <div class="quickCard__text">
+                  <div class="quickCard__title" data-i18n="quickSessionsTitle">جلسة تركيز</div>
+                  <div class="quickCard__sub" data-i18n="quickSessionsSub">Pomodoro للتوجيهي</div>
+                </div>
+                <i class="quickCard__chev" data-lucide="chevron-left"></i>
+              </button>
+
+              <button class="quickCard" data-goto="mistakes" type="button">
+                <div class="quickCard__icon"><i data-lucide="notebook-pen"></i></div>
+                <div class="quickCard__text">
+                  <div class="quickCard__title" data-i18n="quickMistakesTitle">دفتر الأخطاء</div>
+                  <div class="quickCard__sub" data-i18n="quickMistakesSub">ثبت المفاهيم ونقاط الضعف</div>
+                </div>
+                <i class="quickCard__chev" data-lucide="chevron-left"></i>
+              </button>
+
+              <button class="quickCard" data-goto="stats" type="button">
+                <div class="quickCard__icon"><i data-lucide="bar-chart-3"></i></div>
+                <div class="quickCard__text">
+                  <div class="quickCard__title" data-i18n="quickStatsTitle">إحصائياتك</div>
+                  <div class="quickCard__sub" data-i18n="quickStatsSub">ترند أسبوعي + تركيز</div>
+                </div>
+                <i class="quickCard__chev" data-lucide="chevron-left"></i>
+              </button>
+
+              <button class="quickCard" data-goto="plan" type="button">
+                <div class="quickCard__icon"><i data-lucide="calendar-check"></i></div>
+                <div class="quickCard__text">
+                  <div class="quickCard__title" data-i18n="quickPlanTitle">خطة الختمة</div>
+                  <div class="quickCard__sub" data-i18n="quickPlanSub">توزيع يومي حتى الهدف</div>
+                </div>
+                <i class="quickCard__chev" data-lucide="chevron-left"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="homeGuidanceTitle">إرشاد سريع</div>
+              <div class="cardHead__hint" data-i18n="homeGuidanceHint">ثلاث خطوات بسيطة</div>
+            </div>
+
+            <ol class="steps">
+              <li>
+                <span class="steps__num">1</span>
+                <div class="steps__body">
+                  <div class="steps__title" data-i18n="step1Title">ثبّت زمن الجلسة</div>
+                  <div class="steps__text" data-i18n="step1Text">ابدأ بـ 25 دقيقة + 5 راحة، وعدّلها حسب قدرتك.</div>
+                </div>
+              </li>
+              <li>
+                <span class="steps__num">2</span>
+                <div class="steps__body">
+                  <div class="steps__title" data-i18n="step2Title">اتبع خطة الختمة</div>
+                  <div class="steps__text" data-i18n="step2Text">كل يوم مهام واضحة + بلوك مراجعة/تحليل أخطاء.</div>
+                </div>
+              </li>
+              <li>
+                <span class="steps__num">3</span>
+                <div class="steps__body">
+                  <div class="steps__title" data-i18n="step3Title">سجّل أخطاءك</div>
+                  <div class="steps__text" data-i18n="step3Text">دفتر الأخطاء أهم من كثرة التكرار بدون فهم.</div>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="homeFocusModeTitle">وضع التركيز</div>
+              <div class="cardHead__hint" data-i18n="homeFocusModeHint">أقل تشتيت، نفس الإنجاز</div>
+            </div>
+
+            <div class="callout">
+              <div class="callout__icon"><i data-lucide="focus"></i></div>
+              <div class="callout__text">
+                <div class="callout__title" data-i18n="focusCalloutTitle">إخفاء المشتتات أثناء الدراسة</div>
+                <div class="callout__desc" data-i18n="focusCalloutDesc">فعّل وضع التركيز من أعلى الشاشة خلال الجلسات أو أثناء تنفيذ مهام الخطة.</div>
+              </div>
+              <button class="btn btn--soft" id="focusCalloutBtn" type="button">
+                <span data-i18n="toggleFocus">تبديل وضع التركيز</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SESSIONS -->
+      <section class="tab" id="tab-sessions" data-tab-panel="sessions" aria-label="Sessions Timer">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle" data-i18n="sessionsTitle">جلسات التركيز</h2>
+            <p class="sectionDesc" data-i18n="sessionsDesc">جلسات بأسلوب بومودورو للتوجيهي — بتركيز نمط وزاري (تسمية فقط).</p>
+          </div>
+          <div class="sectionActions">
+            <span class="chip" id="timeInsightChip">
+              <i data-lucide="sun-moon"></i>
+              <span data-i18n="timeInsightLoading">جاري حساب أفضل وقت دراسة…</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="glassCard">
+            <div class="timerShell">
+              <div class="timerTop">
+                <div class="modePill" id="timerModePill">
+                  <span class="dot"></span>
+                  <span id="timerModeLabel" data-i18n="modeStudy">دراسة</span>
+                </div>
+                <div class="timerMeta">
+                  <span class="muted" data-i18n="ministerialLabel">تسمية: نمط وزاري للممارسة</span>
+                </div>
+              </div>
+
+              <div class="ringRow">
+                <canvas id="ring" width="220" height="220" aria-label="Progress ring"></canvas>
+                <div class="ringCenter">
+                  <div id="timerClock" class="clock">25:00</div>
+                  <div class="muted" id="timerHint" data-i18n="timerHint">جاهز — اضغط ابدأ</div>
+                </div>
+              </div>
+
+              <div class="timerControls">
+                <button class="btn btn--primary" id="btnStart" type="button">
+                  <i data-lucide="play"></i><span data-i18n="start">ابدأ</span>
+                </button>
+                <button class="btn btn--soft" id="btnPause" type="button">
+                  <i data-lucide="pause"></i><span data-i18n="pause">إيقاف مؤقت</span>
+                </button>
+                <button class="btn btn--ghost" id="btnReset" type="button">
+                  <i data-lucide="rotate-ccw"></i><span data-i18n="reset">إعادة</span>
+                </button>
+                <button class="btn btn--ghost" id="btnNext" type="button">
+                  <i data-lucide="skip-forward"></i><span data-i18n="next">التالي</span>
+                </button>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="formGrid">
+                <label class="field">
+                  <span class="field__label" data-i18n="studyMinutes">دقائق الدراسة</span>
+                  <input id="studyMin" type="number" min="10" max="90" step="1" inputmode="numeric" />
+                  <span class="field__hint" data-i18n="studyHint">10–90 دقيقة</span>
+                </label>
+
+                <label class="field">
+                  <span class="field__label" data-i18n="breakMinutes">دقائق الراحة</span>
+                  <input id="breakMin" type="number" min="3" max="30" step="1" inputmode="numeric" />
+                  <span class="field__hint" data-i18n="breakHint">3–30 دقيقة</span>
+                </label>
+
+                <label class="toggle">
+                  <input id="autoSwitch" type="checkbox" />
+                  <span class="toggle__ui"></span>
+                  <span class="toggle__text" data-i18n="autoSwitch">تبديل تلقائي بين دراسة/راحة</span>
+                </label>
+              </div>
+
+              <div class="note" role="status" id="timerToast" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="sessionNotesTitle">ملاحظات الجلسة</div>
+              <div class="cardHead__hint" data-i18n="sessionNotesHint">اكتب نقاط سريعة…</div>
+            </div>
+
+            <textarea id="sessionNotes" class="textarea" rows="10" data-i18n-placeholder="sessionNotesPh" placeholder="مثال: نقاط ضعف اليوم — قاعدة if only + تلخيص فتح عمورية"></textarea>
+
+            <div class="row">
+              <button id="saveNotes" class="btn btn--soft" type="button">
+                <i data-lucide="save"></i><span data-i18n="saveNotes">حفظ</span>
+              </button>
+              <button id="clearNotes" class="btn btn--ghost" type="button">
+                <i data-lucide="trash-2"></i><span data-i18n="clear">مسح</span>
+              </button>
+              <span class="muted" id="notesStatus" data-i18n="notesAutosave">يتم الحفظ محليًا</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric__label" data-i18n="mStudySessions">جلسات دراسة مكتملة</div>
+                <div class="metric__value" id="mStudySessions">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric__label" data-i18n="mStudyMinutes">مجموع دقائق الدراسة</div>
+                <div class="metric__value" id="mStudyMinutes">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric__label" data-i18n="mBreaks">استراحات مكتملة</div>
+                <div class="metric__value" id="mBreaks">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric__label" data-i18n="mBreakMinutes">مجموع دقائق الراحة</div>
+                <div class="metric__value" id="mBreakMinutes">0</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="callout callout--small">
+              <div class="callout__icon"><i data-lucide="bell"></i></div>
+              <div class="callout__text">
+                <div class="callout__title" data-i18n="alertsTitle">تنبيه صوتي + بصري</div>
+                <div class="callout__desc" data-i18n="alertsDesc">عند انتهاء المؤقت راح يظهر تنبيه، وتقدر تكتم الصوت من أعلى.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- PLAN -->
+      <section class="tab" id="tab-plan" data-tab-panel="plan" aria-label="Finish Plan">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle" data-i18n="planTitle">خطة الختمة</h2>
+            <p class="sectionDesc" data-i18n="planDesc">توزيع يوم-بيوم حتى تاريخ الهدف، مع بلوك مراجعة/تحليل أخطاء بشكل منتظم.</p>
+          </div>
+          <div class="sectionActions">
+            <button class="btn btn--soft" id="copyPlan" type="button">
+              <i data-lucide="copy"></i><span data-i18n="copyPlan">نسخ الخطة</span>
+            </button>
+            <button class="btn btn--ghost" id="regenPlan" type="button">
+              <i data-lucide="shuffle"></i><span data-i18n="regenPlan">إعادة توليد</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="glassCard">
+          <div class="planControls">
+            <div class="pillGroup" role="group" aria-label="Plan mode">
+              <button class="pill" data-mode="intensive" type="button" data-i18n="modeIntensive">مكثفة (حتى 1 أيار)</button>
+              <button class="pill" data-mode="balanced" type="button" data-i18n="modeBalanced">متوازنة (حتى 15 أيار)</button>
+              <button class="pill" data-mode="light" type="button" data-i18n="modeLight">خفيفة (حتى 15 أيار)</button>
+            </div>
+
+            <div class="pillGroup" role="group" aria-label="Daily split">
+              <button class="pill" data-split="two" type="button" data-i18n="splitTwo">مهمتين/يوم</button>
+              <button class="pill" data-split="four" type="button" data-i18n="splitFour">مادة لكل يوم (4)</button>
+            </div>
+
+            <div class="controlsRow">
+              <label class="toggle">
+                <input id="lighterDay" type="checkbox" />
+                <span class="toggle__ui"></span>
+                <span class="toggle__text" data-i18n="lighterDay">يوم أسبوعي أخف</span>
+              </label>
+
+              <label class="field field--inline">
+                <span class="field__label" data-i18n="reviewEvery">بلوك مراجعة كل</span>
+                <select id="reviewFreq" class="select">
+                  <option value="2">2</option>
+                  <option value="3" selected>3</option>
+                  <option value="4">4</option>
+                </select>
+                <span class="field__hint" data-i18n="days">أيام</span>
+              </label>
+
+              <button class="btn btn--primary" id="generatePlan" type="button">
+                <i data-lucide="wand-2"></i><span data-i18n="generate">توليد الخطة</span>
+              </button>
+
+              <button class="btn btn--ghost" id="rebalancePlan" type="button">
+                <i data-lucide="replace"></i><span data-i18n="rebalance">إعادة موازنة/يوم فائت</span>
+              </button>
+            </div>
+
+            <div class="weakBox">
+              <div class="weakBox__title" data-i18n="weakBoostTitle">تعزيز نقاط الضعف</div>
+              <div class="weakBox__hint" data-i18n="weakBoostHint">اختَر 1–3 وسوم لكل مادة لزيادة تكرارها بالخطة.</div>
+              <div class="weakBox__grid" id="weakBoostGrid">
+                <!-- JS inject -->
+              </div>
+            </div>
+
+            <div class="note">
+              <i data-lucide="info"></i>
+              <span data-i18n="editNote">يمكن تعديل البنود بسهولة من ملف app.js</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="planList" id="planList">
+          <!-- JS inject day-by-day -->
+        </div>
+      </section>
+
+      <!-- STATS -->
+      <section class="tab" id="tab-stats" data-tab-panel="stats" aria-label="Statistics">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle" data-i18n="statsTitle">الإحصائيات</h2>
+            <p class="sectionDesc" data-i18n="statsDesc">ملخص إنجازك: جلسات + خطة + دفتر أخطاء، مع ترند أسبوعي بسيط.</p>
+          </div>
+          <div class="sectionActions">
+            <button class="btn btn--ghost" id="resetStats" type="button">
+              <i data-lucide="rotate-ccw"></i><span data-i18n="resetStats">تصفير الإحصائيات</span>
+            </button>
+            <button class="btn btn--danger" id="resetAll" type="button">
+              <i data-lucide="trash-2"></i><span data-i18n="resetAll">تصفير كل شيء</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="statsOverview">نظرة عامة</div>
+              <div class="cardHead__hint" data-i18n="liveUpdate">يتحدّث مباشرة</div>
+            </div>
+
+            <div class="metrics metrics--big">
+              <div class="metric">
+                <div class="metric__label" data-i18n="sCompletedSessions">جلسات مكتملة</div>
+                <div class="metric__value" id="sCompletedSessions">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric__label" data-i18n="sTotalMinutes">مجموع دقائق الدراسة</div>
+                <div class="metric__value" id="sTotalMinutes">0</div>
+              </div>
+              <div class="metric">
+                <div class="metric__label" data-i18n="sPlanCompletion">إنجاز الخطة</div>
+                <div class="metric__value" id="sPlanCompletion">0%</div>
+              </div>
+              <div class="metric">
+                <div class="metric__label" data-i18n="sStreak">الستريك الحالي</div>
+                <div class="metric__value" id="sStreak">0</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="insights" id="insights">
+              <div class="chip"><i data-lucide="trending-up"></i><span id="trendText" data-i18n="trendLoading">جاري حساب الترند…</span></div>
+              <div class="chip"><i data-lucide="badge-check"></i><span id="consistencyText" data-i18n="consistencyLoading">جاري حساب الاتساق…</span></div>
+              <div class="chip"><i data-lucide="sparkles"></i><span id="focusScoreText" data-i18n="focusScoreLoading">جاري حساب نقاط التركيز…</span></div>
+            </div>
+          </div>
+
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="weeklyChartTitle">آخر 7 أيام</div>
+              <div class="cardHead__hint" data-i18n="weeklyChartHint">دقائق الدراسة اليومية</div>
+            </div>
+
+            <canvas id="weeklyChart" width="800" height="280" aria-label="Weekly minutes chart"></canvas>
+
+            <div class="divider"></div>
+
+            <div class="subjectDist">
+              <div class="subjectDist__title" data-i18n="subjectDistTitle">توزيع المواد</div>
+              <div class="bars" id="subjectBars">
+                <!-- JS inject -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MISTAKES -->
+      <section class="tab" id="tab-mistakes" data-tab-panel="mistakes" aria-label="Mistake Notebook">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle" data-i18n="mistakesTitle">دفتر الأخطاء</h2>
+            <p class="sectionDesc" data-i18n="mistakesDesc">سجّل أخطاءك أنت فقط — ثم راجعها بتكرار متباعد (1/3/7/14 يوم).</p>
+          </div>
+          <div class="sectionActions">
+            <button class="btn btn--soft" id="reviewToday" type="button">
+              <i data-lucide="repeat"></i><span data-i18n="reviewToday">مراجعة اليوم</span>
+            </button>
+            <button class="btn btn--ghost" id="exportMistakes" type="button">
+              <i data-lucide="download"></i><span data-i18n="exportJson">تصدير JSON</span>
+            </button>
+            <label class="btn btn--ghost fileBtn">
+              <i data-lucide="upload"></i><span data-i18n="importJson">استيراد JSON</span>
+              <input id="importMistakes" type="file" accept="application/json" hidden />
+            </label>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="addMistakeTitle">إضافة خطأ</div>
+              <div class="cardHead__hint" data-i18n="addMistakeHint">اختصره وخليه واضح</div>
+            </div>
+
+            <form id="mistakeForm" class="formGrid formGrid--wide">
+              <label class="field">
+                <span class="field__label" data-i18n="subject">المادة</span>
+                <select id="mSubject" class="select" required>
+                  <option value="history" data-i18n="subHistory">تاريخ</option>
+                  <option value="religion" data-i18n="subReligion">دين</option>
+                  <option value="english" data-i18n="subEnglish">إنجليزي</option>
+                  <option value="arabic" data-i18n="subArabic">عربي</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field__label" data-i18n="title">العنوان</span>
+                <input id="mTitle" class="input" maxlength="60" required />
+                <span class="field__hint" data-i18n="titleHint">قصير (حتى 60 حرف)</span>
+              </label>
+
+              <label class="field">
+                <span class="field__label" data-i18n="whatWentWrong">شو اللي غلط؟</span>
+                <textarea id="mWrong" class="textarea" rows="3" required></textarea>
+              </label>
+
+              <label class="field">
+                <span class="field__label" data-i18n="correctConcept">التصحيح/المفهوم الصحيح</span>
+                <textarea id="mCorrect" class="textarea" rows="3" required></textarea>
+              </label>
+
+              <label class="field">
+                <span class="field__label" data-i18n="fixAction">إجراء تصحيح</span>
+                <textarea id="mFix" class="textarea" rows="2" required></textarea>
+              </label>
+
+              <label class="field">
+                <span class="field__label" data-i18n="tags">وسوم (اختياري)</span>
+                <input id="mTags" class="input" placeholder="مثال: قاعدة, تلخيص, مصطلح" />
+              </label>
+
+              <div class="row row--spread">
+                <label class="toggle">
+                  <input id="mMastered" type="checkbox" />
+                  <span class="toggle__ui"></span>
+                  <span class="toggle__text" data-i18n="mastered">متقن</span>
+                </label>
+
+                <button class="btn btn--primary" type="submit">
+                  <i data-lucide="plus"></i><span data-i18n="add">إضافة</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="libraryTitle">مكتبتك</div>
+              <div class="cardHead__hint" data-i18n="libraryHint">بحث + فلترة</div>
+            </div>
+
+            <div class="row">
+              <input id="mSearch" class="input" data-i18n-placeholder="searchPh" placeholder="ابحث…" />
+              <select id="mFilter" class="select">
+                <option value="all" data-i18n="allSubjects">كل المواد</option>
+                <option value="history" data-i18n="subHistory">تاريخ</option>
+                <option value="religion" data-i18n="subReligion">دين</option>
+                <option value="english" data-i18n="subEnglish">إنجليزي</option>
+                <option value="arabic" data-i18n="subArabic">عربي</option>
+              </select>
+            </div>
+
+            <div class="mistakeList" id="mistakeList"></div>
+
+            <div class="note">
+              <i data-lucide="info"></i>
+              <span data-i18n="notQuestionBank">هذا دفتر أخطاء شخصي — ليس بنك أسئلة، ولا يحتوي أسئلة.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <dialog id="reviewModal" class="modal">
+          <div class="modal__top">
+            <div class="modal__title" data-i18n="reviewModalTitle">مراجعة اليوم</div>
+            <button class="iconBtn iconBtn--close" id="closeReview" type="button" aria-label="Close">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <div class="modal__body" id="reviewBody"></div>
+          <div class="modal__actions">
+            <button class="btn btn--ghost" id="closeReview2" type="button" data-i18n="close">إغلاق</button>
+          </div>
+        </dialog>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="tab" id="tab-settings" data-tab-panel="settings" aria-label="Settings">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle" data-i18n="settingsTitle">الإعدادات</h2>
+            <p class="sectionDesc" data-i18n="settingsDesc">عدّل الزمن، الصوت، وضع التركيز، وأدوات النسخ الاحتياطي.</p>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="durationsTitle">إعدادات الزمن</div>
+              <div class="cardHead__hint" data-i18n="durationsHint">تنطبق على المؤقت</div>
+            </div>
+
+            <div class="formGrid">
+              <label class="field">
+                <span class="field__label" data-i18n="studyMinutes">دقائق الدراسة</span>
+                <input id="setStudyMin" type="number" min="10" max="90" step="1" inputmode="numeric" />
+                <span class="field__hint" data-i18n="studyHint">10–90 دقيقة</span>
+              </label>
+
+              <label class="field">
+                <span class="field__label" data-i18n="breakMinutes">دقائق الراحة</span>
+                <input id="setBreakMin" type="number" min="3" max="30" step="1" inputmode="numeric" />
+                <span class="field__hint" data-i18n="breakHint">3–30 دقيقة</span>
+              </label>
+
+              <button class="btn btn--soft" id="saveDurations" type="button">
+                <i data-lucide="save"></i><span data-i18n="save">حفظ</span>
+              </button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="formGrid">
+              <label class="toggle">
+                <input id="setAutoSwitch" type="checkbox" />
+                <span class="toggle__ui"></span>
+                <span class="toggle__text" data-i18n="autoSwitch">تبديل تلقائي بين دراسة/راحة</span>
+              </label>
+
+              <label class="toggle">
+                <input id="setSound" type="checkbox" />
+                <span class="toggle__ui"></span>
+                <span class="toggle__text" data-i18n="soundOn">الصوت مفعّل</span>
+              </label>
+
+              <label class="toggle">
+                <input id="setFocusDefault" type="checkbox" />
+                <span class="toggle__ui"></span>
+                <span class="toggle__text" data-i18n="focusDefault">وضع التركيز افتراضيًا</span>
+              </label>
+
+              <label class="toggle">
+                <input id="setLighterDay" type="checkbox" />
+                <span class="toggle__ui"></span>
+                <span class="toggle__text" data-i18n="lighterDay">يوم أسبوعي أخف</span>
+              </label>
+
+              <label class="field field--inline">
+                <span class="field__label" data-i18n="reviewEvery">بلوك مراجعة كل</span>
+                <select id="setReviewFreq" class="select">
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+                <span class="field__hint" data-i18n="days">أيام</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="glassCard">
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="appearanceTitle">المظهر</div>
+              <div class="cardHead__hint" data-i18n="appearanceHint">لمسات لون (Accent)</div>
+            </div>
+
+            <div class="accentGrid">
+              <button class="accent" data-accent="iris" type="button" aria-label="Iris"></button>
+              <button class="accent" data-accent="mint" type="button" aria-label="Mint"></button>
+              <button class="accent" data-accent="ember" type="button" aria-label="Ember"></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cardHead">
+              <div class="cardHead__title" data-i18n="backupTitle">نسخ احتياطي</div>
+              <div class="cardHead__hint" data-i18n="backupHint">خطة + إحصائيات + أخطاء</div>
+            </div>
+
+            <div class="row">
+              <button class="btn btn--soft" id="exportAll" type="button">
+                <i data-lucide="download"></i><span data-i18n="exportAll">تصدير كل البيانات</span>
+              </button>
+
+              <label class="btn btn--ghost fileBtn">
+                <i data-lucide="upload"></i><span data-i18n="importAll">استيراد</span>
+                <input id="importAllFile" type="file" accept="application/json" hidden />
+              </label>
+            </div>
+
+            <div class="note">
+              <i data-lucide="info"></i>
+              <span data-i18n="cacheHelp">إذا صار تعارض بالكاش أثناء التطوير، احذف Service Worker من إعدادات المتصفح.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Nav (mobile) -->
+    <nav class="bottomNav" aria-label="Bottom navigation">
+      <button class="bottomNav__item" data-tab="home" type="button">
+        <i data-lucide="sparkles"></i><span data-i18n="tabHome">الرئيسية</span>
+      </button>
+      <button class="bottomNav__item" data-tab="sessions" type="button">
+        <i data-lucide="timer"></i><span data-i18n="tabSessions">جلسات</span>
+      </button>
+      <button class="bottomNav__item" data-tab="plan" type="button">
+        <i data-lucide="calendar-check"></i><span data-i18n="tabPlan">خطة الختمة</span>
+      </button>
+      <button class="bottomNav__item" data-tab="stats" type="button">
+        <i data-lucide="bar-chart-3"></i><span data-i18n="tabStats">الإحصائيات</span>
+      </button>
+      <button class="bottomNav__item" data-tab="mistakes" type="button">
+        <i data-lucide="notebook-pen"></i><span data-i18n="tabMistakes">دفتر الأخطاء</span>
+      </button>
+      <button class="bottomNav__item" data-tab="settings" type="button">
+        <i data-lucide="settings"></i><span data-i18n="tabSettings">الإعدادات</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js" defer></script>
+  <script>
+    // Safe SW register (actual sw.js provided later)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
