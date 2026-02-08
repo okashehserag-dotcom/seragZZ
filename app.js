@@ -2684,3 +2684,83 @@
 
   document.addEventListener("DOMContentLoaded", init);
 })();
+// === Boss Fight Launcher (Modal) ===
+(function () {
+  function el(tag, attrs = {}, html = "") {
+    const e = document.createElement(tag);
+    Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+    if (html) e.innerHTML = html;
+    return e;
+  }
+
+  const btn = el("button", { id: "bfOpenBtn", type: "button" }, "🥊 Boss");
+  btn.style.cssText = `
+    position:fixed; bottom:16px; left:16px; z-index:9999;
+    padding:10px 12px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(0,0,0,.25);
+    color: inherit; cursor:pointer;
+    backdrop-filter: blur(6px);
+  `;
+
+  const overlay = el("div", { id: "bfOverlay" });
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:10000;
+    background: rgba(0,0,0,.55);
+    display:none; align-items:center; justify-content:center;
+    padding:14px;
+  `;
+
+  const modal = el("div", { id: "bfModal" });
+  modal.style.cssText = `
+    width:min(980px, 100%); max-height:90vh; overflow:auto;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.18);
+    backdrop-filter: blur(10px);
+    padding:12px;
+  `;
+
+  const topBar = el("div", {}, `
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;">
+      <strong>Boss Fight</strong>
+      <button id="bfCloseBtn" type="button"
+        style="padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:inherit;cursor:pointer;">
+        إغلاق ✕
+      </button>
+    </div>
+    <div id="bfMount"></div>
+  `);
+
+  modal.appendChild(topBar);
+  overlay.appendChild(modal);
+
+  function closeModal() {
+    overlay.style.display = "none";
+  }
+
+  async function openModal() {
+    overlay.style.display = "flex";
+    const mount = document.getElementById("bfMount");
+    if (!mount.dataset.loaded) {
+      const res = await fetch("./bossfight.html");
+      mount.innerHTML = await res.text();
+      mount.dataset.loaded = "1";
+      if (window.initBossFight) window.initBossFight();
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.body.appendChild(btn);
+    document.body.appendChild(overlay);
+
+    btn.addEventListener("click", openModal);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    document.getElementById("bfCloseBtn").addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+  });
+})();
