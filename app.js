@@ -2783,21 +2783,103 @@
 .bfTitle{font-size:18px;font-weight:800}
 .bfSub{opacity:.75;font-size:13px}
 .bfPill{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.14);opacity:.9;font-size:12px}
-.bfArena{position:relative;border-radius:18px;padding:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);
-background:radial-gradient(1200px 600px at 20% 10%, rgba(59,130,246,.20), transparent 55%),
-radial-gradient(900px 500px at 80% 30%, rgba(34,197,94,.16), transparent 60%),
-radial-gradient(700px 400px at 50% 90%, rgba(239,68,68,.12), transparent 60%), rgba(0,0,0,.18)}
-.bfBossWrap{display:grid;place-items:center;padding:10px 0 6px}
-#bfBoss{width:160px;height:160px;border-radius:22px;position:relative;border:1px solid rgba(255,255,255,.10);
-background:radial-gradient(60px 60px at 40% 35%, rgba(255,255,255,.18), transparent 60%),
-radial-gradient(90px 90px at 70% 70%, rgba(0,0,0,.22), transparent 55%),
-linear-gradient(135deg, rgba(59,130,246,.35), rgba(34,197,94,.22));
-box-shadow:0 12px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06);
-animation:bfFloat 2.4s ease-in-out infinite}
-#bfBoss::before,#bfBoss::after{content:"";position:absolute;top:56px;width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
-#bfBoss::before{right:52px} #bfBoss::after{left:52px}
-#bfMouth{position:absolute;left:50%;top:92px;transform:translateX(-50%);width:56px;height:18px;border-radius:0 0 999px 999px;background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 2px rgba(255,255,255,.06)}
-@keyframes bfFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.bfArena{
+  position:relative;border-radius:18px;padding:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(160,60,255,.22), transparent 55%),
+    radial-gradient(900px 500px at 85% 25%, rgba(255,60,60,.16), transparent 60%),
+    radial-gradient(700px 400px at 50% 95%, rgba(0,0,0,.35), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
+}
+
+.bfBossWrap{display:grid;place-items:center;padding:14px 0 8px; position:relative}
+
+.bfBossWrap::before{
+  content:"";
+  position:absolute;
+  width:230px;height:230px;border-radius:999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,60,60,.22), rgba(160,60,255,.18), transparent 65%);
+  filter: blur(2px);
+  animation: bfAura 2.2s ease-in-out infinite;
+}
+@keyframes bfAura{
+  0%,100%{transform: scale(1); opacity:.9}
+  50%{transform: scale(1.06); opacity:.7}
+}
+
+#bfBoss{
+  width:170px;height:170px;border-radius:26px;position:relative;
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(55px 55px at 35% 35%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(120px 120px at 70% 75%, rgba(0,0,0,.55), transparent 60%),
+    linear-gradient(135deg, rgba(65,10,90,.85), rgba(12,12,18,.9));
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset 0 -18px 40px rgba(0,0,0,.45);
+  animation: bfFloat 2.1s ease-in-out infinite;
+  transform: translateZ(0);
+}
+
+/* قرون */
+#bfBoss .horn{
+  position:absolute; top:-18px; width:44px; height:44px;
+  background: linear-gradient(135deg, rgba(255,255,255,.20), rgba(0,0,0,.35));
+  border:1px solid rgba(255,255,255,.10);
+  border-radius: 10px 10px 28px 10px;
+  transform: rotate(25deg);
+  box-shadow: 0 10px 18px rgba(0,0,0,.4);
+}
+#bfBoss .horn.left{left:18px; transform: rotate(-25deg); border-radius: 10px 10px 10px 28px;}
+#bfBoss .horn.right{right:18px}
+
+/* عيون متوهجة */
+#bfBoss::before,#bfBoss::after{
+  content:"";
+  position:absolute;
+  top:60px;
+  width:18px;height:18px;border-radius:999px;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.9), rgba(255,80,80,.8) 35%, rgba(255,0,0,.25) 70%, transparent 72%);
+  box-shadow: 0 0 18px rgba(255,60,60,.55);
+}
+#bfBoss::before{right:58px}
+#bfBoss::after{left:58px}
+
+/* حواجب */
+#bfBoss .brow{
+  position:absolute; top:48px; width:34px; height:10px;
+  background: rgba(0,0,0,.55);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+#bfBoss .brow.left{left:48px; transform: rotate(18deg)}
+#bfBoss .brow.right{right:48px; transform: rotate(-18deg)}
+
+/* فم + أنياب */
+#bfMouth{
+  position:absolute;left:50%;top:98px;transform:translateX(-50%);
+  width:74px;height:26px;border-radius:0 0 999px 999px;
+  background: rgba(0,0,0,.55);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.06);
+}
+#bfMouth::before,#bfMouth::after{
+  content:"";
+  position:absolute; top:2px;
+  width:0;height:0;
+  border-left:7px solid transparent;
+  border-right:7px solid transparent;
+  border-top:14px solid rgba(255,255,255,.85);
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
+}
+#bfMouth::before{left:18px}
+#bfMouth::after{right:18px}
+
+@keyframes bfFloat{
+  0%,100%{transform: translateY(0) rotate(.2deg)}
+  50%{transform: translateY(-7px) rotate(-.2deg)}
+}
 .bfHit{animation:bfShake .18s linear 2}
 @keyframes bfShake{0%{transform:translate(0,0)}25%{transform:translate(3px,-1px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,1px)}100%{transform:translate(0,0)}}
 .bfSpark{position:absolute;width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.9);pointer-events:none;animation:bfPop .55s ease-out forwards}
